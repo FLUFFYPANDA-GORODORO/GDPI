@@ -1,0 +1,361 @@
+{
+  "Students": {
+    "rowCount": 326,
+    "sampleKeys": [
+      "Name",
+      "Email",
+      "Campus",
+      "Specialization",
+      "Soft Skills Evaluation",
+      "Technical Evaluation",
+      "Soft Skills Score",
+      "Technical Score",
+      "GD Score",
+      "Total Score Overall",
+      "Total Score SS + GD"
+    ],
+    "sampleRows": [
+      {
+        "Name": "Aakriti Tandon",
+        "Email": "akriti.tandon@indiraisbs.ac.in",
+        "Campus": "ISBS PGDM",
+        "Specialization": "HR",
+        "Soft Skills Evaluation": "Present",
+        "Technical Evaluation": "Present",
+        "Soft Skills Score": 52,
+        "Technical Score": 64.2,
+        "GD Score": 48,
+        "Total Score Overall": 54.73333333,
+        "Total Score SS + GD": 50
+      },
+      {
+        "Name": "Abha Patil",
+        "Email": "abha.patil24@indiraiimp.edu.in",
+        "Campus": "IIMP",
+        "Specialization": "MKT",
+        "Soft Skills Evaluation": "Present",
+        "Technical Evaluation": "Present",
+        "Soft Skills Score": 66,
+        "Technical Score": 80,
+        "GD Score": 73,
+        "Total Score Overall": 73,
+        "Total Score SS + GD": 69.5
+      },
+      {
+        "Name": "Abhijit Dipak Wagh",
+        "Email": "abhijit.wagh24@indiraiimp.edu.in",
+        "Campus": "IIMP",
+        "Specialization": "MKT",
+        "Soft Skills Evaluation": "Absent",
+        "Technical Evaluation": "Absent",
+        "Soft Skills Score": "",
+        "Technical Score": "",
+        "GD Score": "",
+        "Total Score Overall": 0,
+        "Total Score SS + GD": 0
+      }
+    ]
+  },
+  "GD Evaluations": {
+    "rowCount": 233,
+    "sampleKeys": [
+      "Student Name",
+      "Opening",
+      "Speaking",
+      "Teamwork",
+      "Engagement",
+      "Closing",
+      "Total Score"
+    ],
+    "sampleRows": [
+      {
+        "Student Name": "Shreyash Hukkeri",
+        "Opening": 19,
+        "Speaking": 16,
+        "Teamwork": 16,
+        "Engagement": 16,
+        "Closing": 17,
+        "Total Score": 84
+      },
+      {
+        "Student Name": "harshal chaudhari",
+        "Opening": 17,
+        "Speaking": 12,
+        "Teamwork": 16,
+        "Engagement": 16,
+        "Closing": 20,
+        "Total Score": 81
+      },
+      {
+        "Student Name": "Utkarsh Satish Thorat",
+        "Opening": 19,
+        "Speaking": 19,
+        "Teamwork": 17,
+        "Engagement": 20,
+        "Closing": 20,
+        "Total Score": 95
+      }
+    ]
+  },
+  "Technical_Evaluations": {
+    "rowCount": 89,
+    "sampleKeys": [
+      "Timestamp",
+      "Interviewer",
+      "Student",
+      "Intro",
+      "Intern",
+      "Domain",
+      "Situational",
+      "Industry",
+      "Total",
+      "Campus",
+      "Spec",
+      "Remarks"
+    ],
+    "sampleRows": [
+      {
+        "Timestamp": 45930.457151724535,
+        "Interviewer": "aishwaryakalyanshetti@gmail.com",
+        "Student": "Gaurav Ashok Pawar",
+        "Intro": 13.2,
+        "Intern": 12,
+        "Domain": 27.200000000000003,
+        "Situational": 14.399999999999999,
+        "Industry": 8,
+        "Total": 74.80000000000001,
+        "Campus": "IIMP",
+        "Spec": "FIN",
+        "Remarks": "Needs to study more about the companies, what they do and why you are interested. Keep upto date about the current happenings in the industry. Detailed study about projects done."
+      },
+      {
+        "Timestamp": 45930.465373541665,
+        "Interviewer": "aishwaryakalyanshetti@gmail.com",
+        "Student": "Bhavesh Dilip Jagtap",
+        "Intro": 12,
+        "Intern": 12,
+        "Domain": 25.6,
+        "Situational": 18.8,
+        "Industry": 12,
+        "Total": 80.4,
+        "Campus": "IIMP",
+        "Spec": "FIN",
+        "Remarks": "Answered well. Just be more confident while answering. \n"
+      },
+      {
+        "Timestamp": 45930.47545143518,
+        "Interviewer": "aishwaryakalyanshetti@gmail.com",
+        "Student": "SONALI SOMNATH GAIKAR",
+        "Intro": 12,
+        "Intern": 15,
+        "Domain": 35,
+        "Situational": 20,
+        "Industry": 15,
+        "Total": 97,
+        "Campus": "ISBS",
+        "Spec": "FIN",
+        "Remarks": "Great interview. "
+      }
+    ]
+  },
+  "SoftSkills_Evaluations": {
+    "rowCount": 83,
+    "sampleKeys": [
+      "Timestamp",
+      "Interviewer",
+      "Student",
+      "Intro",
+      "Exp",
+      "Body",
+      "STAR",
+      "Crisp",
+      "Pers",
+      "Total",
+      "Campus",
+      "Spec"
+    ],
+    "sampleRows": [
+      {
+        "Timestamp": 45930.404623298615,
+        "Interviewer": "tusharvkshirsagar@gmail.com",
+        "Student": "Ankita Sarode",
+        "Intro": 16,
+        "Exp": 12,
+        "Body": 12,
+        "STAR": 16,
+        "Crisp": 12,
+        "Pers": 12,
+        "Total": 80,
+        "Campus": "IIMP",
+        "Spec": "MKT"
+      },
+      {
+        "Timestamp": 45930.45332707176,
+        "Interviewer": "deodeepa@gmail.com",
+        "Student": "Vyankatesh Santosh Dharmal",
+        "Intro": 5.4,
+        "Exp": 4.6,
+        "Body": 5.2,
+        "STAR": 4,
+        "Crisp": 5,
+        "Pers": 6,
+        "Total": 30.2,
+        "Campus": "IIMP",
+        "Spec": "FIN",
+        "Remarks": "Required info missing "
+      },
+      {
+        "Timestamp": 45930.46189180556,
+        "Interviewer": "smrutimehadia@gmail.com",
+        "Student": "Amit Satish Bodake",
+        "Intro": 13,
+        "Exp": 10.600000000000001,
+        "Body": 11.200000000000001,
+        "STAR": 13.600000000000001,
+        "Crisp": 11.200000000000001,
+        "Pers": 12,
+        "Total": 71.60000000000001,
+        "Campus": "IIMP",
+        "Spec": "MKT",
+        "Remarks": "Overall good. "
+      }
+    ]
+  },
+  "Count": {
+    "rowCount": 8,
+    "sampleKeys": [
+      "Trainer",
+      "Count",
+      "Type"
+    ],
+    "sampleRows": [
+      {
+        "Trainer": "aishwaryakalyanshetti@gmail.com",
+        "Count": 35,
+        "Type": "Technical"
+      },
+      {
+        "Trainer": "drtasneem.in@gmail.com",
+        "Count": 7,
+        "Type": "Technical"
+      },
+      {
+        "Trainer": "kuldeep.manhas@gmail.com",
+        "Count": 11,
+        "Type": "Technical"
+      }
+    ]
+  },
+  "Interviewers": {
+    "rowCount": 10,
+    "sampleKeys": [
+      "Email"
+    ],
+    "sampleRows": [
+      {
+        "Email": "test@1234.com"
+      },
+      {
+        "Email": "madhumithapalani26@gmail.com"
+      },
+      {
+        "Email": "tusharvkshirsagar@gmail.com"
+      }
+    ]
+  },
+  "Student list": {
+    "rowCount": 138,
+    "sampleKeys": [
+      "Domain",
+      "Total"
+    ],
+    "sampleRows": [
+      {
+        "Domain": "Finance",
+        "Total": 63
+      },
+      {
+        "Domain": "HR",
+        "Total": 8
+      },
+      {
+        "Domain": "Marketing",
+        "Total": 58
+      }
+    ]
+  },
+  "Sheet9": {
+    "rowCount": 142,
+    "sampleKeys": [
+      "__EMPTY",
+      "Name",
+      "Email",
+      "Campus",
+      "Specialization",
+      "Total Score Overall"
+    ],
+    "sampleRows": [
+      {
+        "__EMPTY": 1,
+        "Name": "Neha Jadhav",
+        "Email": "neha.jadhav24@indiraiimp.edu.in",
+        "Campus": "IIMP",
+        "Specialization": "HR",
+        "Total Score Overall": 81.93333333
+      },
+      {
+        "__EMPTY": 2,
+        "Name": "swaleha paliwala",
+        "Email": "swaleha.paliwala24@indiraiimp.edu.in",
+        "Campus": "IIMP",
+        "Specialization": "FIN",
+        "Total Score Overall": 81
+      },
+      {
+        "__EMPTY": 3,
+        "Name": "Manish Ahire",
+        "Email": "manishahire@indiraicp.edu.in",
+        "Campus": "ICP",
+        "Specialization": "MKT",
+        "Total Score Overall": 79.86666667
+      }
+    ]
+  },
+  "Compiled List": {
+    "rowCount": 86,
+    "sampleKeys": [
+      "Overall Rating Student List",
+      "__EMPTY",
+      "__EMPTY_1",
+      "__EMPTY_2",
+      "__EMPTY_3",
+      "__EMPTY_4"
+    ],
+    "sampleRows": [
+      {
+        "Overall Rating Student List": "Sr. No",
+        "__EMPTY": "Name",
+        "__EMPTY_1": "Email",
+        "__EMPTY_2": "Campus",
+        "__EMPTY_3": "Specialization",
+        "__EMPTY_4": "Total Score Overall"
+      },
+      {
+        "Overall Rating Student List": 1,
+        "__EMPTY": "Neha Jadhav",
+        "__EMPTY_1": "neha.jadhav24@indiraiimp.edu.in",
+        "__EMPTY_2": "IIMP",
+        "__EMPTY_3": "HR",
+        "__EMPTY_4": 81.93333333
+      },
+      {
+        "Overall Rating Student List": 2,
+        "__EMPTY": "swaleha paliwala",
+        "__EMPTY_1": "swaleha.paliwala24@indiraiimp.edu.in",
+        "__EMPTY_2": "IIMP",
+        "__EMPTY_3": "FIN",
+        "__EMPTY_4": 81
+      }
+    ]
+  }
+}
