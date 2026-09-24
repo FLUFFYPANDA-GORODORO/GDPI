@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@keyframes chartFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes arcPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(99, 102, 241, 0));
+  }
+  50% {
+    filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.35));
+  }
+}
+
+.animate-chart-fade {
+  animation: chartFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-arc-glow {
+  animation: arcPulse 2s ease-in-out infinite;
+}

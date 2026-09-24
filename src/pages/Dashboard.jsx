@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Award,
   Users,
@@ -28,6 +28,88 @@ import {
 import { getAllStudents, getSpecializationTopScore } from '../utils/dataService';
 import HalfGaugeChart from '../components/HalfGaugeChart';
 
+/**
+ * AnimatedCounter component for counting up numbers smoothly
+ */
+function AnimatedCounter({ value, duration = 900, triggerKey, suffix = '', prefix = '' }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTimestamp = null;
+    let frameId;
+    const target = Number(value) || 0;
+
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic curve
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(target * ease));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      }
+    };
+
+    setDisplayValue(0);
+    frameId = requestAnimationFrame(step);
+
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [value, duration, triggerKey]);
+
+  return <>{prefix}{displayValue}{suffix}</>;
+}
+
+/**
+ * AnimatedProgressBar component for smooth filling-up bar animation
+ */
+function AnimatedProgressBar({
+  value,
+  max = 100,
+  colorClass = 'bg-indigo-600',
+  heightClass = 'h-1.5',
+  delay = 0,
+  triggerKey,
+  showShimmer = true
+}) {
+  const [percent, setPercent] = useState(0);
+  const [isRendered, setIsRendered] = useState(false);
+
+  useEffect(() => {
+    setPercent(0);
+    setIsRendered(false);
+
+    const timer = setTimeout(() => {
+      setIsRendered(true);
+      const targetPercent = Math.min(Math.max((value / max) * 100, 0), 100);
+      setPercent(targetPercent);
+    }, 40 + delay);
+
+    return () => clearTimeout(timer);
+  }, [value, max, delay, triggerKey]);
+
+  return (
+    <div className={`w-full bg-slate-100 ${heightClass} rounded-full overflow-hidden relative shadow-inner`}>
+      <div
+        className={`h-full rounded-full transition-all ease-out relative ${colorClass}`}
+        style={{
+          width: `${percent}%`,
+          opacity: isRendered ? 1 : 0,
+          transitionDuration: '950ms',
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        {showShimmer && (
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none opacity-70" />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const students = useMemo(() => getAllStudents(), []);
   const [selectedStudentId, setSelectedStudentId] = useState(students[0]?.id || '');
@@ -46,36 +128,50 @@ export default function Dashboard() {
     return getSpecializationTopScore(currentStudent.specialization);
   }, [currentStudent]);
 
-  // Unified Radar Dataset for Single Radar Canvas (16 parameters without prefixes)
+  // Unified Radar Dataset for Single Radar Canvas (dynamically includes only active category skills)
   const singleRadarData = useMemo(() => {
     const gd = currentStudent.gdBreakdown;
     const tech = currentStudent.techBreakdown;
     const soft = currentStudent.softBreakdown;
 
-    return [
-      // 5 GD Parameters
-      { param: 'Opening', gdScore: Math.round((gd.opening / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
-      { param: 'Speaking', gdScore: Math.round((gd.speaking / 20) * 100), techScore: 0, softScore: 0, benchmark: 90 },
-      { param: 'Teamwork', gdScore: Math.round((gd.teamwork / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
-      { param: 'Engagement', gdScore: Math.round((gd.engagement / 20) * 100), techScore: 0, softScore: 0, benchmark: 90 },
-      { param: 'Closing', gdScore: Math.round((gd.closing / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
+    const data = [];
 
-      // 5 Technical Parameters
-      { param: 'Tech Intro', gdScore: 0, techScore: Math.round((tech.intro / 15) * 100), softScore: 0, benchmark: 95 },
-      { param: 'Internship', gdScore: 0, techScore: Math.round((tech.intern / 15) * 100), softScore: 0, benchmark: 90 },
-      { param: 'Domain Knowledge', gdScore: 0, techScore: Math.round((tech.domain / 35) * 100), softScore: 0, benchmark: 98 },
-      { param: 'Situational', gdScore: 0, techScore: Math.round((tech.situational / 20) * 100), softScore: 0, benchmark: 90 },
-      { param: 'Industry Trends', gdScore: 0, techScore: Math.round((tech.industry / 15) * 100), softScore: 0, benchmark: 90 },
+    // 5 GD Parameters
+    if (showGD) {
+      data.push(
+        { param: 'Opening', gdScore: Math.round((gd.opening / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
+        { param: 'Speaking', gdScore: Math.round((gd.speaking / 20) * 100), techScore: 0, softScore: 0, benchmark: 90 },
+        { param: 'Teamwork', gdScore: Math.round((gd.teamwork / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
+        { param: 'Engagement', gdScore: Math.round((gd.engagement / 20) * 100), techScore: 0, softScore: 0, benchmark: 90 },
+        { param: 'Closing', gdScore: Math.round((gd.closing / 20) * 100), techScore: 0, softScore: 0, benchmark: 95 },
+      );
+    }
 
-      // 6 Communication Parameters
-      { param: 'Communication Intro', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
-      { param: 'Experience', gdScore: 0, techScore: 0, softScore: Math.round((soft.exp / 15) * 100), benchmark: 90 },
-      { param: 'Body Language', gdScore: 0, techScore: 0, softScore: Math.round((soft.body / 15) * 100), benchmark: 90 },
-      { param: 'STAR Method', gdScore: 0, techScore: 0, softScore: Math.round((soft.star / 20) * 100), benchmark: 95 },
-      { param: 'Crispness', gdScore: 0, techScore: 0, softScore: Math.round((soft.crisp / 15) * 100), benchmark: 90 },
-      { param: 'Personality', gdScore: 0, techScore: 0, softScore: Math.round((soft.pers / 15) * 100), benchmark: 90 },
-    ];
-  }, [currentStudent]);
+    // 5 Technical Parameters
+    if (showTech) {
+      data.push(
+        { param: 'Tech Intro', gdScore: 0, techScore: Math.round((tech.intro / 15) * 100), softScore: 0, benchmark: 95 },
+        { param: 'Internship', gdScore: 0, techScore: Math.round((tech.intern / 15) * 100), softScore: 0, benchmark: 90 },
+        { param: 'Domain Knowledge', gdScore: 0, techScore: Math.round((tech.domain / 35) * 100), softScore: 0, benchmark: 98 },
+        { param: 'Situational', gdScore: 0, techScore: Math.round((tech.situational / 20) * 100), softScore: 0, benchmark: 90 },
+        { param: 'Industry Trends', gdScore: 0, techScore: Math.round((tech.industry / 15) * 100), softScore: 0, benchmark: 90 },
+      );
+    }
+
+    // 6 Communication Parameters
+    if (showSoft) {
+      data.push(
+        { param: 'Communication Intro', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
+        { param: 'Experience', gdScore: 0, techScore: 0, softScore: Math.round((soft.exp / 15) * 100), benchmark: 90 },
+        { param: 'Body Language', gdScore: 0, techScore: 0, softScore: Math.round((soft.body / 15) * 100), benchmark: 90 },
+        { param: 'STAR Method', gdScore: 0, techScore: 0, softScore: Math.round((soft.star / 20) * 100), benchmark: 95 },
+        { param: 'Crispness', gdScore: 0, techScore: 0, softScore: Math.round((soft.crisp / 15) * 100), benchmark: 90 },
+        { param: 'Personality', gdScore: 0, techScore: 0, softScore: Math.round((soft.pers / 15) * 100), benchmark: 90 },
+      );
+    }
+
+    return data;
+  }, [currentStudent, showGD, showTech, showSoft]);
 
   // Derived STAR Method breakdown (Situation, Task, Action, Result out of 20 each)
   const starData = useMemo(() => {
@@ -191,7 +287,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             
             {/* GD Card */}
-            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">GD Score</span>
                 <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded">
@@ -200,19 +296,23 @@ export default function Dashboard() {
               </div>
               <div className="mt-2">
                 <div className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {currentStudent.scores.gd} <span className="text-xs font-normal text-slate-400">/100</span>
+                  <AnimatedCounter value={currentStudent.scores.gd} triggerKey={selectedStudentId} /> <span className="text-xs font-normal text-slate-400">/100</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                  <div
-                    className="bg-emerald-600 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(currentStudent.scores.gd, 100)}%` }}
-                  ></div>
+                <div className="mt-2">
+                  <AnimatedProgressBar
+                    value={currentStudent.scores.gd}
+                    max={100}
+                    colorClass="bg-emerald-600"
+                    heightClass="h-1.5"
+                    delay={100}
+                    triggerKey={selectedStudentId}
+                  />
                 </div>
               </div>
             </div>
 
             {/* Technical PI Card */}
-            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Technical PI</span>
                 <div className="p-1.5 bg-blue-50 text-blue-600 rounded">
@@ -221,19 +321,23 @@ export default function Dashboard() {
               </div>
               <div className="mt-2">
                 <div className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {currentStudent.scores.technical} <span className="text-xs font-normal text-slate-400">/100</span>
+                  <AnimatedCounter value={currentStudent.scores.technical} triggerKey={selectedStudentId} /> <span className="text-xs font-normal text-slate-400">/100</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                  <div
-                    className="bg-blue-600 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(currentStudent.scores.technical, 100)}%` }}
-                  ></div>
+                <div className="mt-2">
+                  <AnimatedProgressBar
+                    value={currentStudent.scores.technical}
+                    max={100}
+                    colorClass="bg-blue-600"
+                    heightClass="h-1.5"
+                    delay={200}
+                    triggerKey={selectedStudentId}
+                  />
                 </div>
               </div>
             </div>
 
             {/* Behavioral PI Card */}
-            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Behavioral PI</span>
                 <div className="p-1.5 bg-amber-50 text-amber-600 rounded">
@@ -242,13 +346,17 @@ export default function Dashboard() {
               </div>
               <div className="mt-2">
                 <div className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {currentStudent.scores.softSkills} <span className="text-xs font-normal text-slate-400">/100</span>
+                  <AnimatedCounter value={currentStudent.scores.softSkills} triggerKey={selectedStudentId} /> <span className="text-xs font-normal text-slate-400">/100</span>
                 </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                  <div
-                    className="bg-amber-600 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(currentStudent.scores.softSkills, 100)}%` }}
-                  ></div>
+                <div className="mt-2">
+                  <AnimatedProgressBar
+                    value={currentStudent.scores.softSkills}
+                    max={100}
+                    colorClass="bg-amber-600"
+                    heightClass="h-1.5"
+                    delay={300}
+                    triggerKey={selectedStudentId}
+                  />
                 </div>
               </div>
             </div>
@@ -276,7 +384,7 @@ export default function Dashboard() {
                 }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>GD</span>
+                <span>Group Discussion</span>
               </button>
 
               <button
@@ -288,7 +396,7 @@ export default function Dashboard() {
                 }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                <span>Tech</span>
+                <span>Technical</span>
               </button>
 
               <button
@@ -318,9 +426,22 @@ export default function Dashboard() {
           </div>
 
           {/* Single Radar Chart Canvas */}
-          <div className="w-full h-[360px] pt-1">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="72%" data={singleRadarData}>
+          <div className="w-full h-[360px] pt-1" key={`radar-container-${selectedStudentId}`}>
+            {singleRadarData.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 py-16 space-y-2">
+                <AlertTriangle className="w-7 h-7 text-slate-300" />
+                <span className="text-xs font-medium">Select at least one skill category above to display the radar chart</span>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart
+                  key={`radar-chart-${selectedStudentId}-${showGD}-${showTech}-${showSoft}-${showBenchmark}-${singleRadarData.length}`}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="72%"
+                  data={singleRadarData}
+                  className="animate-chart-fade"
+                >
                 <PolarGrid stroke="#E2E8F0" />
                 <PolarAngleAxis
                   dataKey="param"
@@ -336,51 +457,64 @@ export default function Dashboard() {
                     dataKey="benchmark"
                     stroke="#94A3B8"
                     fill="#CBD5E1"
-                    fillOpacity={0.1}
+                    fillOpacity={0.12}
                     strokeDasharray="4 4"
+                    isAnimationActive={true}
+                    animationDuration={1100}
+                    animationEasing="ease-out"
                   />
                 )}
 
                 {/* GD Layer */}
                 {showGD && (
                   <Radar
-                    name="GD Layer"
+                    name="Group Discussion"
                     dataKey="gdScore"
                     stroke="#059669"
                     fill="#10B981"
                     fillOpacity={0.35}
                     strokeWidth={2}
+                    isAnimationActive={true}
+                    animationDuration={1100}
+                    animationEasing="ease-out"
                   />
                 )}
 
                 {/* Technical Layer */}
                 {showTech && (
                   <Radar
-                    name="Technical Layer"
+                    name="Technical"
                     dataKey="techScore"
                     stroke="#2563EB"
                     fill="#3B82F6"
                     fillOpacity={0.35}
                     strokeWidth={2}
+                    isAnimationActive={true}
+                    animationDuration={1100}
+                    animationEasing="ease-out"
                   />
                 )}
 
                 {/* Communication Layer */}
                 {showSoft && (
                   <Radar
-                    name="Communication Layer"
+                    name="Communication"
                     dataKey="softScore"
                     stroke="#D97706"
                     fill="#F59E0B"
                     fillOpacity={0.35}
                     strokeWidth={2}
+                    isAnimationActive={true}
+                    animationDuration={1100}
+                    animationEasing="ease-out"
                   />
                 )}
 
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px', fontSize: '11px' }} />
               </RadarChart>
             </ResponsiveContainer>
-          </div>
+          )}
+        </div>
 
         </div>
 
@@ -393,7 +527,7 @@ export default function Dashboard() {
         <div className="lg:col-span-7 flex flex-col gap-6 justify-between">
           
           {/* STAR Method Breakdown Card (65% Height) */}
-          <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 flex-[65]">
+          <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 flex-[65]" key={`star-card-${selectedStudentId}`}>
             <div>
               <h3 className="text-sm font-bold text-slate-900 tracking-tight">
                 STAR method breakdown
@@ -401,11 +535,15 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-4 pt-1 flex-1 flex flex-col justify-center">
-              {starData.map((item) => {
+              {starData.map((item, idx) => {
                 const Icon = item.icon;
                 const isStrong = item.score >= 14;
                 return (
-                  <div key={item.name} className="flex items-center justify-between gap-3">
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between gap-3 animate-chart-fade"
+                    style={{ animationDelay: `${idx * 70}ms` }}
+                  >
                     {/* Left Icon & Label */}
                     <div className="flex items-center gap-2.5 w-28 shrink-0">
                       <Icon className="w-4 h-4 text-slate-600" />
@@ -413,24 +551,26 @@ export default function Dashboard() {
                     </div>
 
                     {/* Horizontal Progress Bar */}
-                    <div className="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          isStrong ? 'bg-lime-600' : 'bg-amber-600'
-                        }`}
-                        style={{ width: `${(item.score / item.max) * 100}%` }}
-                      ></div>
+                    <div className="flex-1">
+                      <AnimatedProgressBar
+                        value={item.score}
+                        max={item.max}
+                        colorClass={isStrong ? 'bg-lime-600' : 'bg-amber-600'}
+                        heightClass="h-2.5"
+                        delay={idx * 110}
+                        triggerKey={selectedStudentId}
+                      />
                     </div>
 
                     {/* Score */}
                     <div className="w-10 text-right text-xs font-semibold text-slate-700 font-mono">
-                      {item.score}/{item.max}
+                      <AnimatedCounter value={item.score} duration={850 + idx * 70} triggerKey={selectedStudentId} />/{item.max}
                     </div>
 
                     {/* Status Badge Pill */}
                     <div className="w-24 text-right">
                       <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border transition-all duration-300 ${
                           isStrong
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : 'bg-amber-50 text-amber-800 border-amber-200'
@@ -487,21 +627,18 @@ export default function Dashboard() {
         </div>
 
         {/* Right Column (5 cols): Resume and CV Diagnostic Card (Tight & Clean Spacing) */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-lg border border-slate-200/80 shadow-xs flex flex-col space-y-4">
+        <div className="lg:col-span-5 bg-white p-6 rounded-lg border border-slate-200/80 shadow-xs flex flex-col space-y-4" key={`cv-card-${selectedStudentId}`}>
           <div>
             <h3 className="text-sm font-bold text-slate-900 tracking-tight">
               Resume and CV diagnostic
             </h3>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              
-            </p>
           </div>
 
           {/* Top 3 Metric Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             
             {/* Card 1: Resume Relevance */}
-            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2">
+            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2 hover:bg-slate-50 transition-all">
               <div className="p-1.5 bg-slate-100 w-fit rounded text-slate-700">
                 <Target className="w-3.5 h-3.5" />
               </div>
@@ -509,14 +646,24 @@ export default function Dashboard() {
                 <span className="text-[11px] font-semibold text-slate-600 block mb-0.5">
                   Relevance
                 </span>
-                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {cvAnalysisData.relevanceScore}%
+                <span className="text-xl font-extrabold text-slate-900 tracking-tight block">
+                  <AnimatedCounter value={cvAnalysisData.relevanceScore} suffix="%" triggerKey={selectedStudentId} />
                 </span>
+                <div className="mt-1.5">
+                  <AnimatedProgressBar
+                    value={cvAnalysisData.relevanceScore}
+                    max={100}
+                    colorClass="bg-indigo-600"
+                    heightClass="h-1"
+                    delay={100}
+                    triggerKey={selectedStudentId}
+                  />
+                </div>
               </div>
             </div>
 
             {/* Card 2: Formatting and Layout */}
-            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2">
+            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2 hover:bg-slate-50 transition-all">
               <div className="p-1.5 bg-slate-100 w-fit rounded text-slate-700">
                 <FileText className="w-3.5 h-3.5" />
               </div>
@@ -524,14 +671,24 @@ export default function Dashboard() {
                 <span className="text-[11px] font-semibold text-slate-600 block mb-0.5">
                   Formatting
                 </span>
-                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {cvAnalysisData.formattingScore}%
+                <span className="text-xl font-extrabold text-slate-900 tracking-tight block">
+                  <AnimatedCounter value={cvAnalysisData.formattingScore} suffix="%" triggerKey={selectedStudentId} />
                 </span>
+                <div className="mt-1.5">
+                  <AnimatedProgressBar
+                    value={cvAnalysisData.formattingScore}
+                    max={100}
+                    colorClass="bg-blue-600"
+                    heightClass="h-1"
+                    delay={180}
+                    triggerKey={selectedStudentId}
+                  />
+                </div>
               </div>
             </div>
 
             {/* Card 3: Impact and Action Verbs */}
-            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2">
+            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2 hover:bg-slate-50 transition-all">
               <div className="p-1.5 bg-slate-100 w-fit rounded text-slate-700">
                 <Rocket className="w-3.5 h-3.5" />
               </div>
@@ -539,9 +696,19 @@ export default function Dashboard() {
                 <span className="text-[11px] font-semibold text-slate-600 block mb-0.5">
                   Impact Verbs
                 </span>
-                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {cvAnalysisData.impactScore}%
+                <span className="text-xl font-extrabold text-slate-900 tracking-tight block">
+                  <AnimatedCounter value={cvAnalysisData.impactScore} suffix="%" triggerKey={selectedStudentId} />
                 </span>
+                <div className="mt-1.5">
+                  <AnimatedProgressBar
+                    value={cvAnalysisData.impactScore}
+                    max={100}
+                    colorClass="bg-violet-600"
+                    heightClass="h-1"
+                    delay={260}
+                    triggerKey={selectedStudentId}
+                  />
+                </div>
               </div>
             </div>
 
@@ -559,7 +726,7 @@ export default function Dashboard() {
                   {cvAnalysisData.skills.map((skill) => (
                     <span
                       key={skill.name}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-900 text-white shadow-2xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-900 text-white shadow-2xs transition-all animate-chart-fade"
                     >
                       <span>{skill.name}</span>
                       {skill.match ? (
@@ -586,7 +753,7 @@ export default function Dashboard() {
             </div>
 
             {/* Right: ATS Score Metric Card (Same width as above 3-column cards) */}
-            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2 w-full sm:w-[calc(33.333%-0.5rem)] shrink-0">
+            <div className="bg-slate-50/70 border border-slate-200/60 p-3 rounded-lg flex flex-col justify-between space-y-2 w-full sm:w-[calc(33.333%-0.5rem)] shrink-0 hover:bg-slate-50 transition-all">
               <div className="p-1.5 bg-slate-100 w-fit rounded text-slate-700">
                 <FileCheck className="w-3.5 h-3.5" />
               </div>
@@ -594,9 +761,19 @@ export default function Dashboard() {
                 <span className="text-[11px] font-semibold text-slate-600 block mb-0.5">
                   ATS Score
                 </span>
-                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  {cvAnalysisData.atsScore}%
+                <span className="text-xl font-extrabold text-slate-900 tracking-tight block">
+                  <AnimatedCounter value={cvAnalysisData.atsScore} suffix="%" triggerKey={selectedStudentId} />
                 </span>
+                <div className="mt-1.5">
+                  <AnimatedProgressBar
+                    value={cvAnalysisData.atsScore}
+                    max={100}
+                    colorClass="bg-emerald-600"
+                    heightClass="h-1"
+                    delay={340}
+                    triggerKey={selectedStudentId}
+                  />
+                </div>
               </div>
             </div>
 

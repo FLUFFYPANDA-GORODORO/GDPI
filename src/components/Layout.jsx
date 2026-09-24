@@ -4,7 +4,7 @@ import { Menu, X, LayoutDashboard, BarChart2, Upload, Camera } from 'lucide-reac
 import { toPng } from 'html-to-image';
 
 export default function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 
   const toggleSidebar = () => {
