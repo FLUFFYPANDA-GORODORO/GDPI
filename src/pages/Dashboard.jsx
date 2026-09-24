@@ -150,7 +150,7 @@ export default function Dashboard() {
     // 5 Technical Parameters
     if (showTech) {
       data.push(
-        { param: 'Tech Intro', gdScore: 0, techScore: Math.round((tech.intro / 15) * 100), softScore: 0, benchmark: 95 },
+        { param: 'Technical Introduction', gdScore: 0, techScore: Math.round((tech.intro / 15) * 100), softScore: 0, benchmark: 95 },
         { param: 'Internship', gdScore: 0, techScore: Math.round((tech.intern / 15) * 100), softScore: 0, benchmark: 90 },
         { param: 'Domain Knowledge', gdScore: 0, techScore: Math.round((tech.domain / 35) * 100), softScore: 0, benchmark: 98 },
         { param: 'Situational', gdScore: 0, techScore: Math.round((tech.situational / 20) * 100), softScore: 0, benchmark: 90 },
@@ -161,7 +161,7 @@ export default function Dashboard() {
     // 6 Communication Parameters
     if (showSoft) {
       data.push(
-        { param: 'Communication Intro', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
+        { param: 'Communication Introduction', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
         { param: 'Experience', gdScore: 0, techScore: 0, softScore: Math.round((soft.exp / 15) * 100), benchmark: 90 },
         { param: 'Body Language', gdScore: 0, techScore: 0, softScore: Math.round((soft.body / 15) * 100), benchmark: 90 },
         { param: 'STAR Method', gdScore: 0, techScore: 0, softScore: Math.round((soft.star / 20) * 100), benchmark: 95 },
