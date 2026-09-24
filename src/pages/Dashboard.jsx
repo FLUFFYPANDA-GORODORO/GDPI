@@ -63,12 +63,12 @@ export default function Dashboard() {
       // 5 Technical Parameters
       { param: 'Tech Intro', gdScore: 0, techScore: Math.round((tech.intro / 15) * 100), softScore: 0, benchmark: 95 },
       { param: 'Internship', gdScore: 0, techScore: Math.round((tech.intern / 15) * 100), softScore: 0, benchmark: 90 },
-      { param: 'Domain Know.', gdScore: 0, techScore: Math.round((tech.domain / 35) * 100), softScore: 0, benchmark: 98 },
+      { param: 'Domain Knowledge', gdScore: 0, techScore: Math.round((tech.domain / 35) * 100), softScore: 0, benchmark: 98 },
       { param: 'Situational', gdScore: 0, techScore: Math.round((tech.situational / 20) * 100), softScore: 0, benchmark: 90 },
       { param: 'Industry Trends', gdScore: 0, techScore: Math.round((tech.industry / 15) * 100), softScore: 0, benchmark: 90 },
 
       // 6 Communication Parameters
-      { param: 'Comm Intro', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
+      { param: 'Communication Intro', gdScore: 0, techScore: 0, softScore: Math.round((soft.intro / 20) * 100), benchmark: 95 },
       { param: 'Experience', gdScore: 0, techScore: 0, softScore: Math.round((soft.exp / 15) * 100), benchmark: 90 },
       { param: 'Body Language', gdScore: 0, techScore: 0, softScore: Math.round((soft.body / 15) * 100), benchmark: 90 },
       { param: 'STAR Method', gdScore: 0, techScore: 0, softScore: Math.round((soft.star / 20) * 100), benchmark: 95 },
@@ -398,9 +398,6 @@ export default function Dashboard() {
               <h3 className="text-sm font-bold text-slate-900 tracking-tight">
                 STAR method breakdown
               </h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Behavioral response scoring across four stages
-              </p>
             </div>
 
             <div className="space-y-4 pt-1 flex-1 flex flex-col justify-center">
@@ -496,7 +493,7 @@ export default function Dashboard() {
               Resume and CV diagnostic
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Score breakdown and detected skill matches
+              
             </p>
           </div>
 
